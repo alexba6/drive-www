@@ -1,0 +1,108 @@
+// Template
+.templateContainer
+  display: grid
+  height: 100%
+  grid-template-areas:  "head head" "action bar" "action content" "nav content" "stat content"
+  grid-auto-rows: 65px 60px 15px 350px auto
+  grid-template-columns: 250px auto
+// Template Action
+.templateActionFrame
+  grid-area: action
+  display: flex
+  align-items: center
+  margin: 0 20px
+
+// Template Bar
+.templateBarFrame
+  grid-area: bar
+  border-bottom: .5px solid var(--border-bg)
+  display: flex
+  margin-left: 10px
+  padding: 2px 10px
+  align-items: center
+
+// Template Content
+.templateContentFrame
+  grid-area: content
+  overflow-y: scroll
+  padding: 20px 0 20px 20px
+
+// Template Header
+.templateHeaderContainer
+  grid-area: head
+  display: grid
+  padding: 0 15px
+  border-bottom: .5px solid var(--border-bg)
+  grid-template-areas:  "logo search settings"
+  grid-auto-columns: 235px 600px auto
+  align-items: center
+
+.templateHeaderButtonMenuFrame
+  grid-area: btn
+  display: none
+  button
+    border: none
+    background-color: transparent
+    svg
+      font-size: 35px
+      color: var(--text-secondary-color)
+
+.templateHeaderLogoFrame
+  grid-area: logo
+
+.templateHeaderSearchFrame
+  grid-area: search
+
+.templateHeaderSettingsFrame
+  grid-area: settings
+  justify-self: end
+
+// Template Navigation
+.templateNavigationContainer
+  grid-area: nav
+  overflow-y: scroll
+  &::-webkit-scrollbar
+    display: none
+  nav
+    margin: 10px 0
+    ul
+      list-style-type: none
+      padding: 0
+      hr
+        height: 1.2px
+        margin: 7px
+        border: none
+        background-color: var(--border-bg)
+
+// Template Stat
+.templateStatContainer
+  grid-area: stat
+
+// Template Navigation Link
+.templateNavigationLinkFrameContainer
+  a
+    text-decoration: none
+
+.templateNavigationLinkFrame
+  display: flex
+  justify-content: start
+  align-items: center
+  cursor: pointer
+  padding: 8px 35px 8px 20px
+  color: var(--text-secondary-color)
+  font-family: 'Product Sans',Arial,sans-serif
+  border-top-right-radius: 50px
+  border-bottom-right-radius: 50px
+  &:hover
+    background-color: rgba(80,80,80,.1)
+  &[active=active]
+    color: var(--link-active-bg)
+    cursor: default
+    background-color: var(--link-hover-bg)
+    &:hover
+      background-color: var(--link-hover-bg)
+
+.templateNavigationLinkIconFrame
+  min-width: 30px
+  svg
+    font-size: 22px

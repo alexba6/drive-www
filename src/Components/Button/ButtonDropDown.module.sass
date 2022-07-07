@@ -1,0 +1,48 @@
+
+
+.buttonDropDownContainer
+  width: 100%
+  button
+    width: 100%
+    min-width: 150px
+    border: none
+    padding: 5px 20px 5px 10px
+    cursor: pointer
+    background: transparent
+    transition: .05s background-color ease-in-out
+    &:hover
+      background-color: rgba(115, 115, 115, 0.15)
+
+.buttonDropDownInner
+  display: flex
+  align-items: center
+  svg
+    font-size: 25px
+    color: #73767a
+  span
+    font-size: 16px
+    margin-left: 10px
+    color: #000000
+
+.hrFrame
+  height: 1px
+  background-color: #d4dcde
+  width: 100%
+  margin: 5px 0
+
+.buttonDropDownGroupContainer
+  position: relative
+
+.buttonDropDownGroup
+  position: absolute
+  padding: 10px 0
+  box-shadow: 0 5px 5px 0 rgb(60 64 67 / 30%), 0 1px 3px 1px rgb(60 64 67 / 15%)
+  border-radius: 5px
+  right: 0
+  transform: translateY(100%)
+  background: #fff
+  border: solid .5px #ececec
+
+@media screen and (max-width: 500px)
+  .buttonDropDownGroup
+    transform: translate(50%, 100%)

@@ -1,0 +1,17 @@
+// Button circle
+.buttonCircleFrame
+  button
+    position: relative
+    border-radius: 100%
+    border: none
+    background: transparent
+    cursor: pointer
+    transition: .1s background-color ease-in-out
+    svg
+      position: absolute
+      top: 50%
+      left: 50%
+      transform: translate(-50%,-50%)
+      color: var(--text-secondary-color) //#5f6368
+    &:hover
+      background-color: rgba(100,100,100,.15)

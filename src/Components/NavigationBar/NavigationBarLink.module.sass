@@ -1,0 +1,27 @@
+
+
+.navigationBarLinkFrame
+  display: flex
+  justify-content: start
+  align-items: center
+  cursor: pointer
+  padding: 8px 35px 8px 20px
+  color: #38383b
+  font-family: 'Product Sans',Arial,sans-serif
+  border-top-right-radius: 50px
+  border-bottom-right-radius: 50px
+  &:hover
+    background-color: rgba(50,50,50,.1)
+
+.navigationBarLinkFrameSelected
+  @extend .navigationBarLinkFrame
+  color: #0f60ee
+  cursor: default
+  background-color: rgba(15, 96, 238, .15)
+  &:hover
+    background-color: rgba(15, 96, 238, .15)
+
+.navigationBarIcon
+  min-width: 30px
+  svg
+    font-size: 22px
