@@ -1,10 +1,7 @@
 import {FunctionComponent, MutableRefObject, useContext, useRef, useState} from 'react'
-import { Button, Card, Form, FormGroup, InputGroup, Spinner } from 'react-bootstrap'
 import { toast } from 'react-toastify'
 
-import { useHistory, Link } from 'react-router-dom'
-import FaSolidKey from '../Icons/FaSolidKey'
-import FaSolidUser from '../Icons/FaSolidUser'
+import { useHistory } from 'react-router-dom'
 import {ContextAuthentication} from "../Context/ContextAuthentication";
 
 export const LoginPage: FunctionComponent = () => {
@@ -49,42 +46,12 @@ export const LoginPage: FunctionComponent = () => {
 
 	return (
 		<div className="d-flex align-items-center justify-content-center h-100">
-			<Card style={{ width: '400px' }}>
-				<Card.Header>
-					<h1>Connexion</h1>
-				</Card.Header>
-				<Card.Body>
-					<FormGroup>
-						<InputGroup className="mb-3">
-							<InputGroup.Text>
-								<FaSolidUser />
-							</InputGroup.Text>
-							<Form.Control type="text" isInvalid={false} ref={loginRef} placeholder="Email ou nom d'utilisateur" />
-							<Form.Control.Feedback type="invalid">{/*{loginError}*/}</Form.Control.Feedback>
-						</InputGroup>
-					</FormGroup>
-					<FormGroup>
-						<InputGroup>
-							<InputGroup.Text>
-								<FaSolidKey />
-							</InputGroup.Text>
-							<Form.Control type="password" ref={passwordRef} isInvalid={false} placeholder="Mot de passe" />
-							<Form.Control.Feedback type="invalid">{/*{passwordError}*/}</Form.Control.Feedback>
-						</InputGroup>
-					</FormGroup>
-					<div className="text-end m-2">
-						<Link to="/renew-password">Mot de passe oublié ?</Link>
-					</div>
-					<hr />
-					<Button className="w-100 mb-3" onClick={onLogin} disabled={loading}>
-						{loading ? (
-							<Spinner as="span" animation="border" size="sm" role="status" aria-hidden="true" />
-						) : (
-							'Connexion'
-						)}
-					</Button>
-				</Card.Body>
-			</Card>
+			<h1>Connexion</h1><br/>
+			<input type="text" ref={loginRef} placeholder="Email ou nom d'utilisateur" /><br/>
+			<input type="password" ref={passwordRef} placeholder="Mot de passe" /><br/>
+			<button onClick={onLogin}>
+				{loading ? 'Pending...' : 'Connexion'}
+			</button>
 		</div>
 	)
 }

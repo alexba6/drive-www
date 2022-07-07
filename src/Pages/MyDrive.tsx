@@ -17,8 +17,7 @@ import {
 	driveSelectCurrentContentStatus,
 	driveSelectTreeFolders
 } from '../Store/Drive/DriveSelector'
-import {TreeFolderView} from "../Components/TreeFolder/TreeFolderView";
-import {RootState} from "../Store";
+import {TreeFolder} from "../Components/TreeFolder/TreeFolder";
 
 
 type MyDrivePageProps = {
@@ -58,7 +57,7 @@ export const MyDrivePage: FunctionComponent<MyDrivePageProps> = (props) => {
 				</ButtonNew>
 			</Template.Action>
 			<Template.Bar>
-				<TreeFolderView
+				<TreeFolder
 					folders={treeFolders.map(folder => folder.folder)}
 				 	onAddFolder={() => {}}
 					onClick={(folder: DriveFolder) => onOpenFolder(folder.id)}

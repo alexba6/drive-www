@@ -18,6 +18,7 @@ import './Styles/index.sass'
 import './Styles/var.sass'
 import 'react-toastify/dist/ReactToastify.css'
 import {Provider} from "react-redux";
+import {SettingsPage} from "./Pages/Settings";
 
 const ProtectedRoutes: FunctionComponent = () => {
 	const authenticationContext = useContext(ContextAuthentication)
@@ -34,6 +35,9 @@ const ProtectedRoutes: FunctionComponent = () => {
 			<Fragment>
 				<Route exact path={RoutesPath.myDrive.target}>
 					<MyDrivePage authenticationKey={authenticationKey}/>
+				</Route>
+				<Route exact path={RoutesPath.settings.target}>
+					<SettingsPage/>
 				</Route>
 			</Fragment>
 		)

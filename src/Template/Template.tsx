@@ -1,4 +1,4 @@
-import React, {FunctionComponent, MouseEvent, ReactElement, useMemo} from 'react'
+import React, {FunctionComponent, MouseEvent, ReactNode, useMemo} from 'react'
 import {useHistory, useLocation} from 'react-router-dom'
 
 import {HeaderHomeLogo} from '../Components/Header/HeaderHomeLogo'
@@ -17,7 +17,7 @@ type TemplateNavigationLinkProps = {
 }
 
 type TemplateProviderProps = {
-    children: ReactElement[]
+    children: ReactNode
 }
 
 const TemplateHeader: FunctionComponent = () => {
