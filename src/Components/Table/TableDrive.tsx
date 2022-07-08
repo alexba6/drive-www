@@ -1,15 +1,15 @@
-import {FunctionComponent, MouseEvent, useState, useCallback, useMemo, useEffect} from 'react'
+import {FunctionComponent, MouseEvent, useState, useCallback} from 'react'
 import moment from 'moment'
 
 import MdiFolder from '../../Icons/MdiFolder'
 import { FileIcon } from '../File/FileIcon'
 import { getFileMultipleSize } from '../../Tools/File'
 import {DriveFile, DriveFolder} from "../../Store/Drive/DriveReducer";
+import {ClickOutsideWrapper} from "../../Wrapper/ClikOutside";
 import {useClick} from "../../hooks/UseClick";
+import {usePressedKey} from "../../hooks/UsePressedKey";
 
 import styles from './TableDrive.module.sass'
-import {usePressedKey} from "../../hooks/UsePressedKey";
-import {ClickOutsideWrapper} from "../../Wrapper/ClikOutside";
 
 type TableFileFolderProps = {
 	folders: DriveFolder[]
@@ -31,6 +31,16 @@ type FileRowProps = {
 	active: boolean
 	onClick: () => void
 	onContextMenu: (event: MouseEvent<HTMLTableRowElement>) => void
+}
+
+type ItemFile = {
+	type: 'file'
+	file: DriveFile
+}
+
+type ItemFolder = {
+	type: 'folder'
+	folder: DriveFolder
 }
 
 /**
@@ -102,6 +112,7 @@ const FolderRow: FunctionComponent<FolderRowProps> = (props) => {
  */
 export const TableDrive: FunctionComponent<TableFileFolderProps> = (props) => {
 	const {folders, files} = props
+	const [startShiftItem, setStartShiftItem] = useState<ItemFile | ItemFolder | null>(null)
 	const [activeFolders, setActiveFolders] = useState<DriveFolder[]>([])
 	const [activeFiles, setActiveFiles] = useState<DriveFile[]>([])
 
@@ -110,6 +121,7 @@ export const TableDrive: FunctionComponent<TableFileFolderProps> = (props) => {
 	const cleanActive = useCallback(() => {
 		setActiveFolders([])
 		setActiveFiles([])
+		setStartShiftItem(null)
 	}, [])
 
 	pressedKey.onKeyDown('Escape', cleanActive)
@@ -125,9 +137,32 @@ export const TableDrive: FunctionComponent<TableFileFolderProps> = (props) => {
 				}
 				return [...state, folder]
 			})
+			setStartShiftItem({
+				type: 'folder', folder
+			})
+		} else if (pressedKey.has('Shift') && startShiftItem) {
+			if (startShiftItem.type === 'folder') {
+				const start = props.folders.indexOf(startShiftItem.folder)
+				const end = props.folders.indexOf(folder)
+				if (end > start) {
+					setActiveFolders([startShiftItem.folder, ...props.folders.slice(start, end + 1)])
+				} else {
+					setActiveFolders([startShiftItem.folder, ...props.folders.slice(end, start)])
+				}
+				setActiveFiles([])
+			} else {
+				const start = props.folders.indexOf(folder)
+				setActiveFolders(props.folders.slice(start, props.folders.length))
+
+				const end = props.files.indexOf(startShiftItem.file)
+				setActiveFiles(props.files.slice(0, end + 1))
+			}
 		} else {
 			setActiveFolders([folder])
 			setActiveFiles([])
+			setStartShiftItem({
+				type: 'folder', folder
+			})
 		}
 	}
 
@@ -142,9 +177,32 @@ export const TableDrive: FunctionComponent<TableFileFolderProps> = (props) => {
 				}
 				return [...state, file]
 			})
+			setStartShiftItem({
+				type: 'file', file
+			})
+		} else if (pressedKey.has('Shift') && startShiftItem) {
+			if (startShiftItem.type === 'file') {
+				const start = props.files.indexOf(startShiftItem.file)
+				const end = props.files.indexOf(file)
+				if (end > start) {
+					setActiveFiles([startShiftItem.file, ...props.files.slice(start, end + 1)])
+				} else {
+					setActiveFiles([startShiftItem.file, ...props.files.slice(end, start)])
+				}
+				setActiveFolders([])
+			} else {
+				const start = props.folders.indexOf(startShiftItem.folder)
+				setActiveFolders(props.folders.slice(start, props.folders.length))
+
+				const end = props.files.indexOf(file)
+				setActiveFiles(props.files.slice(0, end + 1))
+			}
 		} else {
 			setActiveFiles([file])
 			setActiveFolders([])
+			setStartShiftItem({
+				type: 'file', file
+			})
 		}
 	}
 

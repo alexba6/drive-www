@@ -14,6 +14,7 @@ import {ClickOutsideWrapper} from "../../Wrapper/ClikOutside";
 
 
 import styles from './TreeFolder.module.sass'
+
 type TreeFolderViewProps = {
 	rootName: string
 	folders: DriveFolder[]
@@ -21,6 +22,7 @@ type TreeFolderViewProps = {
 	onClick: (folder: DriveFolder) => void
 	onAddFolder: (parentFolder: DriveFolder) => void
 	onUploadFiles: (parentFolder: DriveFolder) => void
+	pending: boolean
 }
 
 type TreeFolderItemProps = {

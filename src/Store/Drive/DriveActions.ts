@@ -2,10 +2,9 @@ import {createAsyncThunk} from '@reduxjs/toolkit'
 import {DriveFile, DriveFolder} from './DriveReducer'
 import {getAuthorization} from "../../Tools/Authentication";
 import { AuthenticationKey } from '../../Context/ContextAuthentication';
-import {useDispatch} from "react-redux";
 
 type DriveGetFolderContentProps = {
-    parentId: string | null,
+    folderId: string | null,
     authenticationKey: AuthenticationKey
 }
 
@@ -26,8 +25,8 @@ export const driveActionGetFolderContent = createAsyncThunk<DriveGetFolderConten
     'drive#getFolderContent',
     async (props: DriveGetFolderContentProps) => {
         const urlSearch = new URLSearchParams()
-        if (props.parentId) {
-            urlSearch.set('parentId', props.parentId)
+        if (props.folderId) {
+            urlSearch.set('parentId', props.folderId)
         }
         const res = await fetch(`/api/drive?${urlSearch.toString()}`, {
             method: 'GET',

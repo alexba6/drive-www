@@ -1,4 +1,4 @@
-import {RootState} from "../index";
+import {RootState, store} from "../index";
 import {StoreDriveContentStatus, StoreDriveFile, StoreDriveFolder, StoreDriveStatus} from "./DriveReducer";
 
 /**
@@ -8,7 +8,7 @@ export const driveSelectCurrentContentFolders = (store: RootState): StoreDriveFo
     const driveStore = store.drive
     return driveStore.folders.filter(folder => (
         folder.status === StoreDriveStatus.READY
-        && folder.folder?.parentId === driveStore.currentFolder.id
+        && folder.folder?.parentId === driveStore.tree.id
     )) as StoreDriveFolder<StoreDriveStatus.READY>[]
 }
 
@@ -18,7 +18,7 @@ export const driveSelectCurrentContentFolders = (store: RootState): StoreDriveFo
 export const driveSelectCurrentContentFiles = (store: RootState): StoreDriveFile<StoreDriveStatus.READY>[] => {
     const driveStore = store.drive
     return driveStore.files.filter(file => (
-        file.file?.parentId === driveStore.currentFolder.id
+        file.file?.parentId === driveStore.tree.id
         && file.status === StoreDriveStatus.READY
     )) as StoreDriveFile<StoreDriveStatus.READY>[]
 }
@@ -28,31 +28,24 @@ export const driveSelectCurrentContentFiles = (store: RootState): StoreDriveFile
  */
 export const driveSelectCurrentContentStatus = (store: RootState): StoreDriveContentStatus | undefined => {
     const driveStore = store.drive
-    const currentFolderId = driveStore.currentFolder.id
-    if (currentFolderId === 'ROOT') {
+    const currentFolderId = driveStore.tree.id
+    if (currentFolderId === null) {
         return driveStore.root.contentStatus
     }
-    return driveStore.folders.find(folder => folder.id === driveStore.currentFolder.id)?.contentStatus
+    return driveStore.folders.find(folder => folder.id === driveStore.tree.id)?.contentStatus
 }
 
 /**
  * @param store
  */
-export const driveSelectCurrentFolder = (store: RootState): StoreDriveFolder | null | undefined  => {
-    const driveStore = store.drive
-    const folderId = driveStore.currentFolder.id
-    if (!folderId) {
-        return null
-    }
-    return driveStore.folders.find(folder => folder.id === folderId)
-}
+export const driveSelectTreeStatus = (store: RootState): StoreDriveContentStatus => store.drive.tree.status
 
 /**
  * @param state
  */
 export const driveSelectTreeFolders = (state: RootState): StoreDriveFolder<StoreDriveStatus.READY>[] => {
     const driveStore = state.drive
-    let folderId = driveStore.currentFolder.id
+    let folderId = driveStore.tree.id
     const treeFolders: StoreDriveFolder<StoreDriveStatus.READY>[] = []
     while (folderId) {
         const folder = driveStore.folders

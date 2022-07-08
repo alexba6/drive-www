@@ -89,7 +89,7 @@ export type DriveStoreState = {
     root: StoreDriveRoot,
     folders: StoreDriveFolder[],
     files: StoreDriveFile[],
-    currentFolder: {
+    tree: {
         status: StoreDriveContentStatus,
         id: DriveFolder['id'] | null
     }
@@ -108,7 +108,7 @@ export const driveStore = createSlice<DriveStoreState, DriveStoreReducers>({
         },
         folders: [],
         files: [],
-        currentFolder: {
+        tree: {
             status: StoreDriveContentStatus.IDLE,
             id: null
         }
@@ -120,7 +120,7 @@ export const driveStore = createSlice<DriveStoreState, DriveStoreReducers>({
             },
             folders: [],
             files: [],
-            currentFolder: {
+            tree: {
                 status: StoreDriveContentStatus.IDLE,
                 id: null
             }
@@ -128,7 +128,7 @@ export const driveStore = createSlice<DriveStoreState, DriveStoreReducers>({
     },
     extraReducers: builder => {
         builder.addCase(driveActionGetFolderContent.pending, (state, props) => {
-            const parentId = props.meta.arg.parentId
+            const parentId = props.meta.arg.folderId
             if (parentId === null) {
                 state.root = {
                     contentStatus: StoreDriveContentStatus.PENDING
@@ -156,7 +156,7 @@ export const driveStore = createSlice<DriveStoreState, DriveStoreReducers>({
             }
         })
         builder.addCase(driveActionGetFolderContent.fulfilled, (state, props) => {
-            const parentId = props.meta.arg.parentId
+            const parentId = props.meta.arg.folderId
             const addedFoldersId = props.payload.folders.map(folder => folder.id)
             const addedFilesId = props.payload.files.map(file => file.id)
             if (parentId === null) {
@@ -210,7 +210,7 @@ export const driveStore = createSlice<DriveStoreState, DriveStoreReducers>({
             ]
         })
         builder.addCase(driveActionGetFolderContent.rejected, (state, props) => {
-            const parentId = props.meta.arg.parentId
+            const parentId = props.meta.arg.folderId
             if (parentId === null) {
                 state.root = {
                     contentStatus: StoreDriveContentStatus.ERROR,
@@ -242,13 +242,13 @@ export const driveStore = createSlice<DriveStoreState, DriveStoreReducers>({
         })
 
         builder.addCase(driveActionChangeFolderTree.pending, (state, props) => {
-            state.currentFolder.status = StoreDriveContentStatus.PENDING
-            state.currentFolder.id = props.meta.arg.folderId
+            state.tree.status = StoreDriveContentStatus.PENDING
+            state.tree.id = props.meta.arg.folderId
         })
         builder.addCase(driveActionChangeFolderTree.fulfilled, (state, props) => {
             const addedFolder = props.payload.folders.map(folder => folder.id)
-            state.currentFolder.status = StoreDriveContentStatus.READY
-            state.currentFolder.id = props.meta.arg.folderId
+            state.tree.status = StoreDriveContentStatus.READY
+            state.tree.id = props.meta.arg.folderId
             state.folders = [
                 ...state.folders.filter(folder => addedFolder.indexOf(folder.id) === -1),
                 ...props.payload.folders.map((folder: DriveFolder): StoreDriveFolder<StoreDriveStatus.READY> => {
@@ -267,8 +267,8 @@ export const driveStore = createSlice<DriveStoreState, DriveStoreReducers>({
             ]
         })
         builder.addCase(driveActionChangeFolderTree.rejected, (state, props) => {
-            state.currentFolder.status = StoreDriveContentStatus.ERROR
-            state.currentFolder.id = props.meta.arg.folderId
+            state.tree.status = StoreDriveContentStatus.ERROR
+            state.tree.id = props.meta.arg.folderId
         })
     }
 })
