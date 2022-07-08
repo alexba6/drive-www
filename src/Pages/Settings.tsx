@@ -1,4 +1,4 @@
-import {FunctionComponent, useContext} from "react";
+import React, {FunctionComponent, useContext} from "react";
 
 import {Template} from '../Template/Template'
 import {ContextTheme} from "../Context/ContextTheme";

@@ -1,0 +1,40 @@
+// Modal Provider
+.modalProviderMask
+  position: absolute
+  background-color: transparent
+  &[active=active]
+    top: 0
+    right: 0
+    bottom: 0
+    left: 0
+    background-color: var(--modal-mask-bg)
+
+.modalProviderContainer
+  position: absolute
+  display: none
+  top: 50%
+  left: 50%
+  transform: translate(-50%, -50%)
+  background-color: var(--body-bg)
+  z-index: 1
+  padding: 20px
+  border-radius: 3px
+  min-width: 250px
+  &[active=active]
+    display: block
+
+.modalProviderHeader
+  display: flex
+  justify-content: space-between
+  align-items: center
+
+// Modal Body
+.modalBodyContainer
+  margin: 15px 0
+
+// Modal Footer
+.modalFooterContainer
+  padding-top: 15px
+  display: flex
+  justify-content: end
+  align-items: center
