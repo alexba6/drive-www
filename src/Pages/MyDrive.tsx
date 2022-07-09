@@ -130,9 +130,7 @@ export const MyDrivePage: FunctionComponent<MyDrivePageProps> = (props) => {
 				/>
 			</Template.Bar>
 			<Template.Body>
-				{(contentStatus === StoreDriveContentStatus.IDLE || contentStatus === StoreDriveContentStatus.PENDING) && <div className='flex-center'>
-					<Spinner/>
-				</div>}
+				{(contentStatus === StoreDriveContentStatus.IDLE || contentStatus === StoreDriveContentStatus.PENDING) && <Spinner/>}
 				{contentStatus === StoreDriveContentStatus.READY && <TableDrive
 					folders={contentFolders.map(folder => folder.folder)}
 					files={contentFiles.map(file => file.file)}
