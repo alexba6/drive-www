@@ -2,6 +2,7 @@ import React, {FunctionComponent, useContext} from "react";
 
 import {Template} from '../Template/Template'
 import {ContextTheme} from "../Context/ContextTheme";
+import {Button} from "../Components/Button/Button";
 
 
 export const SettingsPage: FunctionComponent = () => {
@@ -12,9 +13,9 @@ export const SettingsPage: FunctionComponent = () => {
             Theme
         </Template.Bar>
         <Template.Body>
-            <button onClick={() => themeContext.toggleTheme()}>
+            <Button onClick={() => themeContext.toggleTheme()} variant='primary'>
                 Passez au thème {themeContext.theme === 'light' ? 'foncé' : 'clair'}
-            </button>
+            </Button>
         </Template.Body>
     </Template.Provider>
 }

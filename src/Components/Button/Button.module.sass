@@ -1,0 +1,46 @@
+// Button
+.button
+  border: solid 1.3px
+  margin: 5px 2px
+  padding: 6px 15px
+  font-size: 20px
+  border-radius: 2px
+  cursor: pointer
+  transition: ease-in-out .2s
+  color: var(--light)
+  border-color: var(--secondary)
+  background-color: var(--secondary)
+  &:hover
+    background-color: transparent
+    color: var(--secondary)
+  &[variant='primary']
+    border-color: var(--primary)
+    background-color: var(--primary)
+    &:hover
+      color: var(--primary)
+      background-color: transparent
+  &[variant='danger']
+    border-color: var(--danger)
+    background-color: var(--danger)
+    &:hover
+      color: var(--danger)
+      background-color: transparent
+  &[variant='warning']
+    border-color: var(--warning)
+    background-color: var(--warning)
+    &:hover
+      color: var(--warning)
+      background-color: transparent
+  &[variant='success']
+    border-color: var(--success)
+    background-color: var(--success)
+    &:hover
+      color: var(--success)
+      background-color: transparent
+  &[variant='info']
+    border-color: var(--info)
+    background-color: var(--info)
+    &:hover
+      color: var(--info)
+      background-color: transparent
+

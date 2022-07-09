@@ -17,6 +17,7 @@ import {
 } from '../Store/Drive/DriveSelector'
 import {TreeFolder} from "../Components/TreeFolder/TreeFolder";
 import {useHistory, useLocation} from "react-router-dom";
+import {Spinner} from "../Components/Spinner/Spinner";
 
 
 type MyDrivePageProps = {
@@ -86,7 +87,9 @@ export const MyDrivePage: FunctionComponent<MyDrivePageProps> = (props) => {
 				/>
 			</Template.Bar>
 			<Template.Body>
-				{(contentStatus === StoreDriveContentStatus.IDLE || contentStatus === StoreDriveContentStatus.PENDING) && 'Pending...'}
+				{(contentStatus === StoreDriveContentStatus.IDLE || contentStatus === StoreDriveContentStatus.PENDING) && <div className='flex-center'>
+					<Spinner/>
+				</div>}
 				{contentStatus === StoreDriveContentStatus.READY && <TableDrive
 					folders={contentFolders.map(folder => folder.folder)}
 					files={contentFiles.map(file => file.file)}

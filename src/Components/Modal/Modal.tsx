@@ -11,6 +11,7 @@ type ModalProviderProps = {
     onClose: () => void,
     children: ReactNode,
     name: string
+    disabledOutsideClick?: boolean
 }
 
 type ModalBodyProps = {
@@ -50,7 +51,7 @@ const ModalProvider: FunctionComponent<ModalProviderProps> = (props) => {
     }, [root])
 
     const onClickOutside = () => {
-        if (props.show) {
+        if (props.show && props.disabledOutsideClick !== true) {
             props.onClose()
         }
     }
@@ -64,7 +65,7 @@ const ModalProvider: FunctionComponent<ModalProviderProps> = (props) => {
                         <h2>{props.name}</h2>
                     </div>
                     <div>
-                        <ButtonCircle size={25} onClick={props.onClose} icon={<MaterialSymbolsClose/>}>
+                        <ButtonCircle size={30} onClick={props.onClose} icon={<MaterialSymbolsClose/>}>
                             Close
                         </ButtonCircle>
                     </div>
