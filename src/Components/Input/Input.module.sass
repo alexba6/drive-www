@@ -1,0 +1,45 @@
+
+$inputHeightDesktop: 38px
+
+// FormInput
+.formInputContainer
+  margin: 18px 0
+
+.formInputFrame
+  border: 1.3px solid var(--border-bg)
+  position: relative
+  border-radius: 2px
+  &[focus='focus']
+    border: 1.3px solid var(--primary)
+  &[error='error']
+    border: 1.3px solid var(--danger)
+  input
+    color: var(--text-primary-color)
+    border: none
+    border-radius: 0
+    height: $inputHeightDesktop
+    background: transparent
+    padding: 0 13px
+    font-size: 16px
+    width: calc(100% - 26px)
+
+.formInputLabel
+  position: absolute
+  top: 50%
+  left: 13px
+  transform: translateY(-50%)
+  color: var(--text-secondary-color)
+  transition: ease-in-out .1s
+  cursor: text
+  &[labelPosition='top']
+    top: -2.5px
+    padding: 0 3px
+    background-color: var(--body-bg)
+  &[focus='focus']
+    color: var(--primary)
+  &[error='error']
+    color: var(--danger)
+
+.formInputErrorFrame
+  label
+    color: var(--danger)
