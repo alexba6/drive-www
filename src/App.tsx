@@ -2,7 +2,7 @@ import {Fragment, FunctionComponent, useContext, useMemo} from 'react'
 import {BrowserRouter, Redirect, Route, useHistory} from 'react-router-dom'
 import { ToastContainer } from 'react-toastify'
 
-import {ThemeProvider} from "./Context/ContextTheme";
+import {ContextTheme, ThemeProvider} from "./Context/ContextTheme";
 import {
 	AuthenticationProvider, ContextAuthentication,
 } from "./Context/ContextAuthentication";
@@ -47,22 +47,27 @@ const ProtectedRoutes: FunctionComponent = () => {
 	)
 }
 
-export const App: FunctionComponent = () => {
+const RouteApp: FunctionComponent = () => {
+	const themeContext = useContext(ContextTheme)
 
+	return <BrowserRouter>
+		<Route exact path="/">
+			<Redirect to={RoutesPath.myDrive.target} />
+		</Route>
+
+		<ProtectedRoutes/>
+
+		<Route exact path={RoutesPath.login.target} component={LoginPage} />
+		<ToastContainer position="bottom-right" autoClose={2000} theme={themeContext.theme}/>
+	</BrowserRouter>
+}
+
+export const App: FunctionComponent = () => {
 	return (
 		<Provider store={store}>
 			<AuthenticationProvider>
 				<ThemeProvider>
-					<BrowserRouter>
-						<Route exact path="/">
-							<Redirect to={RoutesPath.myDrive.target} />
-						</Route>
-
-						<ProtectedRoutes/>
-
-						<Route exact path={RoutesPath.login.target} component={LoginPage} />
-						<ToastContainer position="bottom-right" autoClose={2000} />
-					</BrowserRouter>
+					<RouteApp/>
 				</ThemeProvider>
 			</AuthenticationProvider>
 		</Provider>

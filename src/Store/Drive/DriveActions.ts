@@ -4,24 +4,34 @@ import {getAuthorization} from "../../Tools/Authentication";
 import { AuthenticationKey } from '../../Context/ContextAuthentication';
 
 type DriveGetFolderContentProps = {
-    folderId: string | null,
     authenticationKey: AuthenticationKey
+    folderId: string | null
 }
 
 type DriveActionGetFolderTreeProps = {
-    folderId: string | null,
     authenticationKey: AuthenticationKey
+    folderId: string | null
+}
+
+type DriveActionAddFolderProps = {
+    authenticationKey: AuthenticationKey
+    name: string
+    parentId: string | null
 }
 
 type DriveGetFolderContent = {
-    folders: DriveFolder[],
+    folders: DriveFolder[]
     files: DriveFile[]
 }
 type DriveActionGetFolderTree = {
     folders: DriveFolder[]
 }
 
-export const driveActionGetFolderContent = createAsyncThunk<DriveGetFolderContent, DriveGetFolderContentProps>(
+type DriveAddFolder = {
+    folder: DriveFolder
+}
+
+const getFolderContent = createAsyncThunk<DriveGetFolderContent, DriveGetFolderContentProps>(
     'drive#getFolderContent',
     async (props: DriveGetFolderContentProps) => {
         const urlSearch = new URLSearchParams()
@@ -38,7 +48,7 @@ export const driveActionGetFolderContent = createAsyncThunk<DriveGetFolderConten
     }
 )
 
-export const driveActionChangeFolderTree = createAsyncThunk<DriveActionGetFolderTree, DriveActionGetFolderTreeProps>(
+const changeFolderTree = createAsyncThunk<DriveActionGetFolderTree, DriveActionGetFolderTreeProps>(
     'drive#getFolderTree',
     async (props: DriveActionGetFolderTreeProps) => {
         if (props.folderId === null) {
@@ -57,3 +67,29 @@ export const driveActionChangeFolderTree = createAsyncThunk<DriveActionGetFolder
         return await res.json()
     }
 )
+
+
+const addFolder = createAsyncThunk<DriveAddFolder, DriveActionAddFolderProps>(
+    'drive#addFolder',
+    async (props: DriveActionAddFolderProps) => {
+        const res = await fetch('/api/drive/folder', {
+            method: 'POST',
+            headers: {
+                authorization: getAuthorization(props.authenticationKey),
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                name: props.name,
+                parentId: props.parentId
+            })
+        })
+        return await res.json()
+    }
+)
+
+
+export const driveAction = {
+    getFolderContent,
+    changeFolderTree,
+    addFolder
+}

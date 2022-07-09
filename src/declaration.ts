@@ -6,7 +6,7 @@ import {
 declare module 'react' {
 	export interface HTMLAttributes<T> extends AriaAttributes, DOMAttributes<T> {
 		focus?: any,
-		labelPosition?: any,
+		label_position?: any,
 		variant?: any,
 		error?: any,
 		align?: any,

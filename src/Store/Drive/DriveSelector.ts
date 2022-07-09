@@ -41,6 +41,11 @@ export const driveSelectCurrentContentStatus = (store: RootState): StoreDriveCon
 export const driveSelectTreeStatus = (store: RootState): StoreDriveContentStatus => store.drive.tree.status
 
 /**
+ * @param store
+ */
+export const driveSelectParentId = (store: RootState): string | null => store.drive.tree.id
+
+/**
  * @param state
  */
 export const driveSelectTreeFolders = (state: RootState): StoreDriveFolder<StoreDriveStatus.READY>[] => {

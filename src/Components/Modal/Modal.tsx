@@ -7,7 +7,7 @@ import {ButtonCircle} from "../Button/ButtonCircle";
 import MaterialSymbolsClose from "../../Icons/MaterialSymbolsClose";
 
 type ModalProviderProps = {
-    show: boolean,
+    display: boolean,
     onClose: () => void,
     children: ReactNode,
     name: string
@@ -28,7 +28,7 @@ const ModalBody: FunctionComponent<ModalBodyProps> = (props) => {
     </div>
 }
 
-export const ModalFooter: FunctionComponent<ModalFooterProps> = (props) => {
+const ModalFooter: FunctionComponent<ModalFooterProps> = (props) => {
     return <div className={styles.modalFooterContainer}>
         {props.children}
     </div>
@@ -37,7 +37,7 @@ export const ModalFooter: FunctionComponent<ModalFooterProps> = (props) => {
 const ModalProvider: FunctionComponent<ModalProviderProps> = (props) => {
     const root = document.createElement('div')
 
-    const active = useMemo(() => props.show ? 'active' : 'unable', [props])
+    const active = useMemo(() => props.display ? 'active' : 'unable', [props])
 
     useEffect(() => {
         const body = document.querySelector('body')
@@ -51,7 +51,7 @@ const ModalProvider: FunctionComponent<ModalProviderProps> = (props) => {
     }, [root])
 
     const onClickOutside = () => {
-        if (props.show && props.disabledOutsideClick !== true) {
+        if (props.display && props.disabledOutsideClick !== true) {
             props.onClose()
         }
     }

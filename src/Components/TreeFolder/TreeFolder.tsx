@@ -20,7 +20,7 @@ type TreeFolderViewProps = {
 	folders: DriveFolder[]
 	onClickRoot: () => void
 	onClick: (folder: DriveFolder) => void
-	onAddFolder: (parentFolder: DriveFolder) => void
+	onAddFolder: () => void
 	onUploadFiles: (parentFolder: DriveFolder) => void
 	pending: boolean
 }
@@ -64,19 +64,16 @@ const TreeFolderItem: FunctionComponent<TreeFolderItemProps> = (props) => {
 				</button>
 				{props.last && <Dropdown.Group show={display}>
 					<Dropdown.Item
-						key={'Add folder'}
 						icon={<MdiFolderPlusOutline />}
 						name={'Dossier'}
 						onClick={handleClick(props.onAddFolder)}
 					/>
 					<Dropdown.Item
-						key={'Add folder'}
 						icon={<MdiFileUploadOutline />}
 						name={'Importer des fichiers'}
 						onClick={handleClick(props.onUploadFiles)}
 					/>
 					<Dropdown.Item
-						key={'Add folder'}
 						icon={<MdiFolderUploadOutline />}
 						name={'Importer un dossier'}
 						onClick={() => {}}
@@ -108,8 +105,8 @@ const TreeFolderMiddle: FunctionComponent<TreeFolderMiddleProps> = (props) => {
 				<MdiChevronRight />
 			</div>
 			<Dropdown.Group show={display}>
-				{props.folders.map((folder: DriveFolder, key: number) => <Dropdown.Item
-					key={key}
+				{props.folders.map((folder: DriveFolder) => <Dropdown.Item
+					key={'m' + folder.id}
 					icon={<MdiFolder />}
 					name={`${folder.name.slice(0, 15)}${folder.name.length > 15 ? '...' : ''}`}
 					onClick={() => props.onClick(folder)}
@@ -139,16 +136,16 @@ export const TreeFolder: FunctionComponent<TreeFolderViewProps> = (props) => {
 				folderName={props.rootName}
 				last={props.folders.length === 0}
 				onClick={props.onClickRoot}
-				onAddFolder={() => {}}
+				onAddFolder={props.onAddFolder}
 				onUploadFiles={() => {}}
 			/>
 			{middleFolders && <TreeFolderMiddle folders={middleFolders} onClick={props.onClick} />}
-			{folders.map((folder: DriveFolder, key: number) => <TreeFolderItem
-				key={key}
-				last={key + 1 === folders.length}
+			{folders.map((folder: DriveFolder, index: number) => <TreeFolderItem
+				key={'t' + folder.id}
+				last={index + 1 === folders.length}
 				folderName={folder.name}
 				onClick={() => props.onClick(folder)}
-				onAddFolder={() => props.onAddFolder(folder)}
+				onAddFolder={props.onAddFolder}
 				onUploadFiles={() => props.onUploadFiles(folder)}
 			/>)}
 		</div>
