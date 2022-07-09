@@ -3,7 +3,7 @@ import { FunctionComponent, ReactNode } from 'react'
 import styles from './ButtonDropdown.module.sass'
 
 type ButtonDropDownProps = {
-	icon: ReactNode
+	icon?: ReactNode
 	name: string
 	onClick: () => void
 }

@@ -9,14 +9,19 @@ export const ClickOutsideWrapper: FunctionComponent<ClickOutsideWrapperProps> = 
     const ref = useRef<HTMLDivElement>(null)
 
     const handleClick = useCallback((event: any) => {
+        event.preventDefault()
         if (ref.current && event.target && !ref.current.contains(event.target)) {
-           props.onClickOutside()
+            props.onClickOutside()
         }
     }, [])
 
     useEffect(() => {
         document.addEventListener('click', handleClick)
-        return () => document.removeEventListener('click', handleClick)
+        document.addEventListener('contextmenu', handleClick)
+        return () => {
+            document.removeEventListener('click', handleClick)
+            document.removeEventListener('contextmenu', handleClick)
+        }
     })
 
     return <div ref={ref}>

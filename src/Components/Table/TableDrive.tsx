@@ -8,8 +8,12 @@ import {DriveFile, DriveFolder} from "../../Store/Drive/DriveReducer";
 import {ClickOutsideWrapper} from "../../Wrapper/ClikOutside";
 import {useClick} from "../../hooks/UseClick";
 import {usePressedKey} from "../../hooks/UsePressedKey";
+import {Dropdown} from "../Dropdown/ButtonDropdown";
+import {useFloatBox} from "../../hooks/UseFloatBox";
+import {BoxFloat} from "../Box/BoxFloat";
 
 import styles from './TableDrive.module.sass'
+import MdiDownload from "../../Icons/MdiDownload";
 
 type TableFileFolderProps = {
 	folders: DriveFolder[]
@@ -116,13 +120,24 @@ export const TableDrive: FunctionComponent<TableFileFolderProps> = (props) => {
 	const [activeFolders, setActiveFolders] = useState<DriveFolder[]>([])
 	const [activeFiles, setActiveFiles] = useState<DriveFile[]>([])
 
+	const fileFloatBox = useFloatBox()
+	const folderFlotBox = useFloatBox()
+	const manyFloatBox = useFloatBox()
+
 	const pressedKey = usePressedKey('Control', 'Escape', 'Shift')
+
+	const cleanFloatBox = useCallback(() => {
+		fileFloatBox.hide()
+		folderFlotBox.hide()
+		manyFloatBox.hide()
+	}, [fileFloatBox, folderFlotBox, manyFloatBox])
 
 	const cleanActive = useCallback(() => {
 		setActiveFolders([])
 		setActiveFiles([])
 		setStartShiftItem(null)
-	}, [])
+		cleanFloatBox()
+	}, [fileFloatBox])
 
 	pressedKey.onKeyDown('Escape', cleanActive)
 
@@ -164,6 +179,7 @@ export const TableDrive: FunctionComponent<TableFileFolderProps> = (props) => {
 				type: 'folder', folder
 			})
 		}
+		cleanFloatBox()
 	}
 
 	/**
@@ -204,11 +220,67 @@ export const TableDrive: FunctionComponent<TableFileFolderProps> = (props) => {
 				type: 'file', file
 			})
 		}
+		cleanFloatBox()
 	}
 
+	/**
+	 * @param event
+	 * @param folder
+	 */
+	const onContextMenuFolder = (event: MouseEvent<HTMLTableRowElement>, folder: DriveFolder) => {
+		event.preventDefault()
+		cleanFloatBox()
+		const position = { x: event.clientX, y: event.clientY }
+		if (activeFolders.indexOf(folder) === -1 || (activeFiles.length === 0 && activeFolders.length === 1)) {
+			setActiveFolders([folder])
+			setActiveFiles([])
+			folderFlotBox.show(position)
+		} else {
+			manyFloatBox.show(position)
+		}
+	}
+
+	/**
+	 * @param event
+	 * @param file
+	 */
+	const onContextMenuFile = (event: MouseEvent<HTMLTableRowElement>, file: DriveFile) => {
+		event.preventDefault()
+		cleanFloatBox()
+		const position = { x: event.clientX, y: event.clientY }
+		if (activeFiles.indexOf(file) === -1 || (activeFiles.length === 1 && activeFolders.length === 0)) {
+			setActiveFiles([file])
+			setActiveFolders([])
+			fileFloatBox.show(position)
+		} else {
+			manyFloatBox.show(position)
+		}
+	}
+
+	const handleAction = (callback: Function) => () => {
+		cleanActive()
+		callback()
+	}
 
 	return (
 		<ClickOutsideWrapper onClickOutside={cleanActive}>
+			<BoxFloat display={folderFlotBox.display} position={folderFlotBox.position} width={100} height={100}>
+				<Dropdown.Group show={true}>
+					<Dropdown.Item name='Rename folder' onClick={() => {}}/>
+				</Dropdown.Group>
+			</BoxFloat>
+			<BoxFloat display={fileFloatBox.display} position={fileFloatBox.position} width={100} height={100}>
+				<Dropdown.Group show={true}>
+					<Dropdown.Item icon={<MdiDownload/>} name='Download' onClick={handleAction(() => props.onDownloadFile(activeFiles[0]))}/>
+				</Dropdown.Group>
+			</BoxFloat>
+
+
+			<BoxFloat display={manyFloatBox.display} position={manyFloatBox.position} width={100} height={100}>
+				<Dropdown.Group show={true}>
+					<Dropdown.Item name='many' onClick={() => {}}/>
+				</Dropdown.Group>
+			</BoxFloat>
 			<div className={styles.tableDriveContainer}>
 				<table>
 					<thead>
@@ -224,14 +296,14 @@ export const TableDrive: FunctionComponent<TableFileFolderProps> = (props) => {
 						onClick={() => onClickFolder(folder)}
 						onOpenFolder={() => props.onOpenFolder(folder)}
 						folder={folder}
-						onContextMenu={(event: MouseEvent<HTMLTableRowElement>) => {}}
+						onContextMenu={event => onContextMenuFolder(event, folder)}
 						active={!!activeFolders.find(activeFolder => activeFolder.id === folder.id)}
 					/>)}
 					{files.map((file: DriveFile, i: number) => <FileRow
 						key={i + props.folders.length}
 						onClick={() =>  onClickFile(file)}
 						file={file}
-						onContextMenu={(event: MouseEvent<HTMLTableRowElement>) => {}}
+						onContextMenu={event => onContextMenuFile(event, file)}
 						active={!!activeFiles.find(activeFile => activeFile.id === file.id)}
 					/>)}
 					</tbody>

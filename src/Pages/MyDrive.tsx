@@ -13,7 +13,7 @@ import {ModalInput} from "../Components/Modal/ModalInput";
 
 import {useModal} from "../hooks/UseModal";
 import {AuthenticationKey} from '../Context/ContextAuthentication'
-import {DriveFolder, StoreDriveContentStatus} from '../Store/Drive/DriveReducer'
+import {DriveFile, DriveFolder, StoreDriveContentStatus} from '../Store/Drive/DriveReducer'
 import {driveAction} from '../Store/Drive/DriveActions'
 import {
 	driveSelectCurrentContentFiles,
@@ -22,6 +22,7 @@ import {
 	driveSelectTreeFolders,
 	driveSelectTreeStatus
 } from '../Store/Drive/DriveSelector'
+import {getAuthorization} from "../Tools/Authentication";
 
 
 type MyDrivePageProps = {
@@ -65,6 +66,26 @@ export const MyDrivePage: FunctionComponent<MyDrivePageProps> = (props) => {
 		}
 		dispatch(driveAction.getFolderContent({ authenticationKey, folderId }))
 		dispatch(driveAction.changeFolderTree({ authenticationKey, folderId }))
+	}
+
+	/**
+	 * @param file
+	 */
+	const onDownloadFile = async (file: DriveFile) => {
+		const resToken = await fetch(`/api/drive/download-token?fileId=${file.id}`, {
+			method: 'GET',
+			headers: {
+				authorization: getAuthorization(authenticationKey)
+			}
+		})
+		if (resToken.status !== 200) {
+			return
+		}
+		const json = await resToken.json()
+		const link = document.createElement('a')
+		link.download = 'download'
+		link.href = `${process.env.REACT_APP_API}/api/drive/download-file?token=${json.download.token}`
+		link.click()
 	}
 
 	/**
@@ -115,7 +136,7 @@ export const MyDrivePage: FunctionComponent<MyDrivePageProps> = (props) => {
 				{contentStatus === StoreDriveContentStatus.READY && <TableDrive
 					folders={contentFolders.map(folder => folder.folder)}
 					files={contentFiles.map(file => file.file)}
-					onDownloadFile={() => {}}
+					onDownloadFile={onDownloadFile}
 					onOpenFolder={(folder: DriveFolder) => onOpenFolder(folder.id)}
 				/>}
 			</Template.Body>
