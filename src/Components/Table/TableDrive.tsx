@@ -14,12 +14,15 @@ import {BoxFloat} from "../Box/BoxFloat";
 
 import styles from './TableDrive.module.sass'
 import MdiDownload from "../../Icons/MdiDownload";
+import MdiPencilOutline from "../../Icons/MdiPencilOutline";
 
 type TableFileFolderProps = {
 	folders: DriveFolder[]
 	files: DriveFile[]
 	onOpenFolder: (folder: DriveFolder) => void
 	onDownloadFile: (file: DriveFile) => void
+	onRenameFolder: (folder: DriveFolder) => void
+	onRenameFile: (file: DriveFile) => void
 }
 
 type FolderRowProps = {
@@ -98,7 +101,7 @@ const FolderRow: FunctionComponent<FolderRowProps> = (props) => {
 			active={props.active ? 'active' : ''}>
 			<td>
 				<div className={styles.tableDriveRowNameCellFrame}>
-					<MdiFolder />
+					<MdiFolder/>
 					<div>
 						<span>{props.folder.name}</span>
 					</div>
@@ -266,12 +269,25 @@ export const TableDrive: FunctionComponent<TableFileFolderProps> = (props) => {
 		<ClickOutsideWrapper onClickOutside={cleanActive}>
 			<BoxFloat display={folderFlotBox.display} position={folderFlotBox.position} width={100} height={100}>
 				<Dropdown.Group show={true}>
-					<Dropdown.Item name='Rename folder' onClick={() => {}}/>
+					<Dropdown.Item
+						icon={<MdiPencilOutline/>}
+						name='Renommer'
+						onClick={handleAction(() => props.onRenameFolder(activeFolders[0]))}
+					/>
 				</Dropdown.Group>
 			</BoxFloat>
 			<BoxFloat display={fileFloatBox.display} position={fileFloatBox.position} width={100} height={100}>
 				<Dropdown.Group show={true}>
-					<Dropdown.Item icon={<MdiDownload/>} name='Download' onClick={handleAction(() => props.onDownloadFile(activeFiles[0]))}/>
+					<Dropdown.Item
+						icon={<MdiDownload/>}
+						name='Download'
+						onClick={handleAction(() => props.onDownloadFile(activeFiles[0]))}
+					/>
+					<Dropdown.Item
+						icon={<MdiPencilOutline/>}
+						name='Renommer'
+						onClick={handleAction(() => props.onRenameFile(activeFiles[0]))}
+					/>
 				</Dropdown.Group>
 			</BoxFloat>
 

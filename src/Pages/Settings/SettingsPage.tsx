@@ -1,8 +1,8 @@
 import React, {FunctionComponent, useContext} from "react";
 
-import {Template} from '../Template/Template'
-import {ContextTheme} from "../Context/ContextTheme";
-import {Button} from "../Components/Button/Button";
+import {Template} from '../../Template/Template'
+import {ContextTheme} from "../../Context/ContextTheme";
+import {Button} from "../../Components/Button/Button";
 
 
 export const SettingsPage: FunctionComponent = () => {

@@ -20,14 +20,14 @@ const assignRefs = <T extends unknown>(...refs: Ref<T | null>[]) => (node: T | n
 
 export const Input = forwardRef<HTMLInputElement, InputProps>((props, ref) => {
     const [focus, setFocus] = useState('')
-    const [empty, setEmpty] = useState(true)
     const localRef = useRef<HTMLInputElement>(null)
 
     const error = useMemo(() => props.error ? 'error' : '', [props.error])
+
     const top = useMemo(() => {
-        const isTop = focus === 'focus' || !empty
+        const isTop = focus === 'focus' || Number(localRef.current?.value.length) > 0
         return isTop ? 'top' : ''
-    }, [focus, empty])
+    }, [focus, localRef])
 
     const handleFocus = (focused: boolean) => () => setFocus(focused ? 'focus' : '')
 
@@ -41,7 +41,6 @@ export const Input = forwardRef<HTMLInputElement, InputProps>((props, ref) => {
         <div className={styles.formInputFrame} focus={focus} error={error}>
             <input
                 ref={assignRefs(ref, localRef)}
-                onChange={event => setEmpty(event.target.value.length === 0)}
                 onFocus={handleFocus(true)}
                 onBlur={handleFocus(false)}
                 type={props.type}

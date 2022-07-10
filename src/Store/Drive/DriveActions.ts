@@ -3,37 +3,58 @@ import {DriveFile, DriveFolder} from './DriveReducer'
 import {getAuthorization} from "../../Tools/Authentication";
 import { AuthenticationKey } from '../../Context/ContextAuthentication';
 
-type DriveGetFolderContentProps = {
+type GetFolderContentProps = {
     authenticationKey: AuthenticationKey
     folderId: string | null
 }
 
-type DriveActionGetFolderTreeProps = {
+type GetFolderTreeProps = {
     authenticationKey: AuthenticationKey
     folderId: string | null
 }
 
-type DriveActionAddFolderProps = {
+type AddFolderProps = {
     authenticationKey: AuthenticationKey
     name: string
     parentId: string | null
 }
 
-type DriveGetFolderContent = {
+type RenameFolderProps = {
+    authenticationKey: AuthenticationKey
+    folder: DriveFolder
+    name: string
+}
+
+type RenameFileProps = {
+    authenticationKey: AuthenticationKey
+    file: DriveFile
+    name: string
+    extension: string
+}
+
+type GetFolderContent = {
     folders: DriveFolder[]
     files: DriveFile[]
 }
-type DriveActionGetFolderTree = {
+type ActionGetFolderTree = {
     folders: DriveFolder[]
 }
 
-type DriveAddFolder = {
+type AddFolder = {
     folder: DriveFolder
 }
 
-const getFolderContent = createAsyncThunk<DriveGetFolderContent, DriveGetFolderContentProps>(
+type RenameFolder = {
+    folder: DriveFolder
+}
+
+type RenameFile = {
+    file: DriveFile
+}
+
+const getFolderContent = createAsyncThunk<GetFolderContent, GetFolderContentProps>(
     'drive#getFolderContent',
-    async (props: DriveGetFolderContentProps) => {
+    async (props: GetFolderContentProps) => {
         const urlSearch = new URLSearchParams()
         if (props.folderId) {
             urlSearch.set('parentId', props.folderId)
@@ -48,9 +69,9 @@ const getFolderContent = createAsyncThunk<DriveGetFolderContent, DriveGetFolderC
     }
 )
 
-const changeFolderTree = createAsyncThunk<DriveActionGetFolderTree, DriveActionGetFolderTreeProps>(
+const changeFolderTree = createAsyncThunk<ActionGetFolderTree, GetFolderTreeProps>(
     'drive#getFolderTree',
-    async (props: DriveActionGetFolderTreeProps) => {
+    async (props: GetFolderTreeProps) => {
         if (props.folderId === null) {
             return {
                 folders: []
@@ -69,9 +90,9 @@ const changeFolderTree = createAsyncThunk<DriveActionGetFolderTree, DriveActionG
 )
 
 
-const addFolder = createAsyncThunk<DriveAddFolder, DriveActionAddFolderProps>(
+const addFolder = createAsyncThunk<AddFolder, AddFolderProps>(
     'drive#addFolder',
-    async (props: DriveActionAddFolderProps) => {
+    async (props: AddFolderProps) => {
         const res = await fetch('/api/drive/folder', {
             method: 'POST',
             headers: {
@@ -87,9 +108,47 @@ const addFolder = createAsyncThunk<DriveAddFolder, DriveActionAddFolderProps>(
     }
 )
 
+const renameFolder = createAsyncThunk<RenameFolder, RenameFolderProps>(
+    'drive#renameFolder',
+    async (props: RenameFolderProps) => {
+        const res = await fetch('/api/drive/folder', {
+            method: 'PUT',
+            headers: {
+                authorization: getAuthorization(props.authenticationKey),
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                folderId: props.folder.id,
+                name: props.name
+            })
+        })
+        return await res.json()
+    }
+)
+
+const renameFile = createAsyncThunk<RenameFile, RenameFileProps>(
+    'drive#renameFile',
+    async (props: RenameFileProps) => {
+        const res = await fetch('/api/drive/file', {
+            method: 'PUT',
+            headers: {
+                authorization: getAuthorization(props.authenticationKey),
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                fileId: props.file.id,
+                name: props.name,
+                extension: props.extension
+            })
+        })
+        return await res.json()
+    }
+)
 
 export const driveAction = {
     getFolderContent,
     changeFolderTree,
-    addFolder
+    addFolder,
+    renameFolder,
+    renameFile
 }

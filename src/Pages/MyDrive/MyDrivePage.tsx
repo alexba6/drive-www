@@ -1,28 +1,28 @@
-import React, {FunctionComponent, useEffect} from 'react'
+import React, {FunctionComponent, useEffect, useState} from 'react'
+import {useHistory, useLocation} from "react-router-dom";
 import {useDispatch, useSelector} from 'react-redux'
 import {unwrapResult} from "@reduxjs/toolkit";
 import {toast} from "react-toastify";
 
-import {Template} from '../Template/Template'
-import {ButtonNew} from '../Components/Button/ButtonNew'
-import {TableDrive} from '../Components/Table/TableDrive'
-import {TreeFolder} from "../Components/TreeFolder/TreeFolder";
-import {useHistory, useLocation} from "react-router-dom";
-import {Spinner} from "../Components/Spinner/Spinner";
-import {ModalInput} from "../Components/Modal/ModalInput";
+import {Template} from '../../Template/Template'
+import {ButtonNew} from '../../Components/Button/ButtonNew'
+import {TableDrive} from '../../Components/Table/TableDrive'
+import {TreeFolder} from "../../Components/TreeFolder/TreeFolder";
+import {Spinner} from "../../Components/Spinner/Spinner";
+import {ModalInput} from "../../Components/Modal/ModalInput";
 
-import {useModal} from "../hooks/UseModal";
-import {AuthenticationKey} from '../Context/ContextAuthentication'
-import {DriveFile, DriveFolder, StoreDriveContentStatus} from '../Store/Drive/DriveReducer'
-import {driveAction} from '../Store/Drive/DriveActions'
+import {useModal} from "../../hooks/UseModal";
+import {AuthenticationKey} from '../../Context/ContextAuthentication'
+import {DriveFile, DriveFolder, StoreDriveContentStatus} from '../../Store/Drive/DriveReducer'
+import {driveAction} from '../../Store/Drive/DriveActions'
 import {
 	driveSelectCurrentContentFiles,
 	driveSelectCurrentContentFolders,
-	driveSelectCurrentContentStatus, driveSelectParentId,
+	driveSelectCurrentContentStatus,
+	driveSelectParentId,
 	driveSelectTreeFolders,
 	driveSelectTreeStatus
-} from '../Store/Drive/DriveSelector'
-import {getAuthorization} from "../Tools/Authentication";
+} from '../../Store/Drive/DriveSelector'
 
 
 type MyDrivePageProps = {
@@ -37,6 +37,8 @@ export const MyDrivePage: FunctionComponent<MyDrivePageProps> = (props) => {
 	const location = useLocation()
 
 	const addFolderModal = useModal()
+	const [renameFolderPending, setRenameFolderPending] = useState<DriveFolder | null>(null)
+	const [renameFilePending, setRenameFilePending] = useState<DriveFile | null>(null)
 
 	const treeStatus = useSelector(driveSelectTreeStatus)
 	const treeFolders = useSelector(driveSelectTreeFolders)
@@ -72,19 +74,14 @@ export const MyDrivePage: FunctionComponent<MyDrivePageProps> = (props) => {
 	 * @param file
 	 */
 	const onDownloadFile = async (file: DriveFile) => {
-		const resToken = await fetch(`/api/drive/download-token?fileId=${file.id}`, {
-			method: 'GET',
-			headers: {
-				authorization: getAuthorization(authenticationKey)
-			}
-		})
-		if (resToken.status !== 200) {
-			return
-		}
-		const json = await resToken.json()
+		const query = new URLSearchParams()
+		query.set('fileId', file.id)
+		query.set('authId', authenticationKey.id)
+		query.set('authKey', authenticationKey.key)
+
 		const link = document.createElement('a')
 		link.download = 'download'
-		link.href = `${process.env.REACT_APP_API}/api/drive/download-file?token=${json.download.token}`
+		link.href = `${process.env.REACT_APP_API}/api/drive/download-file?${query.toString()}`
 		link.click()
 	}
 
@@ -94,12 +91,57 @@ export const MyDrivePage: FunctionComponent<MyDrivePageProps> = (props) => {
 	const onAddFolder = async (name: string) => {
 		const id = toast.loading('Ajout du dossier')
 		try {
-			const { folder } = unwrapResult(await dispatch(driveAction.addFolder({
+			unwrapResult(await dispatch(driveAction.addFolder({
 				authenticationKey, name, parentId
 			})))
-			toast.success(`"${folder.name}" ajouté`)
+			toast.success('Dossier ajouté')
 		} catch (e) {
 			toast.error('Impossible d\'ajouter le dossier')
+		} finally {
+			toast.dismiss(id)
+		}
+	}
+
+	/**
+	 * @param name
+	 */
+	const onRenameFolder = async (name: string) => {
+		const folder = renameFolderPending
+		if (!folder || folder.name === name) {
+			return
+		}
+		const id = toast.loading('Modication du dossier')
+		try {
+			unwrapResult(await dispatch(driveAction.renameFolder({
+				authenticationKey, name, folder
+			})))
+			toast.success('Dossier renommé')
+		} catch (e) {
+			toast.error('Impossible de renommer le dossier')
+		} finally {
+			toast.dismiss(id)
+		}
+	}
+
+	/**
+	 * @param basename
+	 */
+	const onRenameFile = async (basename: string) => {
+		const file = renameFilePending
+		const split = basename.split('.').reverse()
+		const name = split.slice(1).reverse().join('.')
+		const extension = split[0]
+		if (!file || (file.name === name && file.ext === extension)) {
+			return
+		}
+		const id = toast.loading('Modication du fichier')
+		try {
+			unwrapResult(await dispatch(driveAction.renameFile({
+				authenticationKey, file, name, extension
+			})))
+			toast.success('Fichier renommé')
+		} catch (e) {
+			toast.error('Impossible de renommer le fichier')
 		} finally {
 			toast.dismiss(id)
 		}
@@ -114,6 +156,24 @@ export const MyDrivePage: FunctionComponent<MyDrivePageProps> = (props) => {
 				placeholder='Nom du dossier'
 				description='Ajouter un nouveau dossier dans le répertoire courant.'
 				onSubmit={onAddFolder}
+			/>
+			<ModalInput
+				name='Renommer un dossier'
+				display={!!renameFolderPending}
+				onClose={() => setRenameFolderPending(null)}
+				placeholder='Nouveau nom'
+				defaultValue={renameFolderPending?.name}
+				description='Modifier le nom du dossier sélectionné.'
+				onSubmit={onRenameFolder}
+			/>
+			<ModalInput
+				name='Renommer un fichier'
+				display={!!renameFilePending}
+				onClose={() => setRenameFilePending(null)}
+				placeholder='Nouveau nom'
+				defaultValue={[renameFilePending?.name, renameFilePending?.ext].join('.')}
+				description='Modifier le nom du fichier sélectionné.'
+				onSubmit={onRenameFile}
 			/>
 			<Template.Action>
 				<ButtonNew onClick={() => {}}/>
@@ -135,7 +195,9 @@ export const MyDrivePage: FunctionComponent<MyDrivePageProps> = (props) => {
 					folders={contentFolders.map(folder => folder.folder)}
 					files={contentFiles.map(file => file.file)}
 					onDownloadFile={onDownloadFile}
-					onOpenFolder={(folder: DriveFolder) => onOpenFolder(folder.id)}
+					onRenameFolder={setRenameFolderPending}
+					onRenameFile={setRenameFilePending}
+					onOpenFolder={folder => onOpenFolder(folder.id)}
 				/>}
 			</Template.Body>
 		</Template.Provider>

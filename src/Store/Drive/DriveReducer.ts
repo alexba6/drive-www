@@ -281,5 +281,38 @@ export const driveStore = createSlice<DriveStoreState, DriveStoreReducers>({
                 }
             ]
         })
+
+        // Rename folder
+        builder.addCase(driveAction.renameFolder.fulfilled, (state, props) => {
+            const updatedFolder = props.payload.folder
+            state.folders = [
+                ...state.folders.filter(folder => folder.id !== updatedFolder.id), {
+                    id: updatedFolder.id,
+                    status: StoreDriveStatus.READY,
+                    contentStatus: state.folders.find(folder => folder.id === updatedFolder.id)?.contentStatus || StoreDriveContentStatus.IDLE,
+                    folder: {
+                        ...updatedFolder,
+                        updatedAt: new Date(updatedFolder.updatedAt),
+                        createdAt: new Date(updatedFolder.createdAt)
+                    }
+                }
+            ]
+        })
+
+        // Rename file
+        builder.addCase(driveAction.renameFile.fulfilled, (state, props) => {
+            const updatedFile = props.payload.file
+            state.files = [
+                ...state.files.filter(file => file.id !== updatedFile.id), {
+                    id: updatedFile.id,
+                    status: StoreDriveStatus.READY,
+                    file: {
+                        ...updatedFile,
+                        updatedAt: new Date(updatedFile.updatedAt),
+                        createdAt: new Date(updatedFile.createdAt)
+                    }
+                }
+            ]
+        })
     }
 })

@@ -7,8 +7,8 @@ import {
 	AuthenticationProvider, ContextAuthentication,
 } from "./Context/ContextAuthentication";
 
-import { MyDrivePage } from './Pages/MyDrive'
-import { LoginPage } from './Pages/Login'
+import { MyDrivePage } from './Pages/MyDrive/MyDrivePage'
+import { LoginPage } from './Pages/Login/LoginPage'
 
 import {RoutesPath} from "./Config/Routes"
 import {store} from "./Store";
@@ -18,7 +18,7 @@ import './Styles/index.sass'
 import './Styles/var.sass'
 import 'react-toastify/dist/ReactToastify.css'
 import {Provider} from "react-redux";
-import {SettingsPage} from "./Pages/Settings";
+import {SettingsPage} from "./Pages/Settings/SettingsPage";
 
 const ProtectedRoutes: FunctionComponent = () => {
 	const authenticationContext = useContext(ContextAuthentication)

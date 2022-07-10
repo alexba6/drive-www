@@ -2,7 +2,7 @@ import {FunctionComponent, MutableRefObject, useContext, useRef, useState} from 
 import { toast } from 'react-toastify'
 
 import { useHistory } from 'react-router-dom'
-import {ContextAuthentication} from "../Context/ContextAuthentication";
+import {ContextAuthentication} from "../../Context/ContextAuthentication";
 
 export const LoginPage: FunctionComponent = () => {
 	const history = useHistory()

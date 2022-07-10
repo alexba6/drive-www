@@ -11,6 +11,7 @@ type ModalInputProps = {
     description: string
     placeholder: string
     onSubmit: (value: string) => void
+    defaultValue?: string
 }
 
 export const ModalInput: FunctionComponent<ModalInputProps> = (props) => {
@@ -20,8 +21,11 @@ export const ModalInput: FunctionComponent<ModalInputProps> = (props) => {
     useEffect(() => {
         if (props.display && ref.current) {
             ref.current.focus()
+            if (props.defaultValue) {
+                ref.current.value = props.defaultValue
+            }
         }
-    }, [props.display, ref])
+    }, [props.display, ref, props.defaultValue])
 
     const onSubmit = useCallback(() => {
         if (ref.current) {
